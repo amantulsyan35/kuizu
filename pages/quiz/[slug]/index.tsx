@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Layout, VideoPlayer } from '../../components';
+import { useRouter } from 'next/router';
+import { Layout, VideoPlayer } from '../../../components';
 import { FaEthereum } from 'react-icons/fa';
-import styles from '../../styles//quiz.module.css';
+import styles from '../../../styles/quiz.module.css';
 
 type QuizStats = {
   title: string;
@@ -33,6 +34,8 @@ const QuizStats = ({ title, desc }: QuizStats) => {
 };
 
 const QuizIntro = () => {
+  const params = useRouter();
+
   return (
     <Layout>
       <section className={styles.quizIntroHero}>
@@ -102,7 +105,9 @@ const QuizIntro = () => {
         <div className={styles.quizStart}>
           <img src='https://media2.giphy.com/media/kDZMoj30w3OswLR08v/giphy.gif' />
         </div>
-        <button className={styles.startButton}>start</button>
+        <Link href={`${params.query.slug}/questions`}>
+          <button className={styles.startButton}>start</button>
+        </Link>
       </section>
     </Layout>
   );
