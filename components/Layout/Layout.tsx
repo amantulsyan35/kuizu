@@ -2,6 +2,8 @@ import Head from 'next/head';
 import { Navbar } from '../../components';
 import styles from './Layout.module.css';
 
+import cls from 'classnames';
+
 interface IlayoutProps {
   title?: string;
   keywords: string;

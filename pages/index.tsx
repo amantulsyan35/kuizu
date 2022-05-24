@@ -1,10 +1,12 @@
 import Image from 'next/image';
-// import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Layout } from '../components';
 import styles from '../styles/Home.module.css';
 import { HompageCard } from '../components';
 
 const Home = () => {
+  const params = useRouter();
+
   return (
     <Layout>
       <section className={styles.homepageHero}>

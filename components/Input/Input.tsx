@@ -26,3 +26,33 @@ export const QuizInput = ({
     </div>
   );
 };
+
+type FormInputProps = {
+  label: string;
+  type: string;
+  placeholder?: any;
+  className: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string;
+};
+
+export const FormInput = ({
+  label,
+  type,
+  placeholder,
+  className,
+  onChange,
+  name,
+}: FormInputProps) => {
+  return (
+    <div className={className}>
+      <label>{label}</label>
+      <input
+        type={type}
+        placeholder={placeholder ? placeholder : null}
+        onChange={onChange}
+        name={name}
+      />
+    </div>
+  );
+};

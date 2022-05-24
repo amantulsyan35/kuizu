@@ -1,13 +1,7 @@
 import Link from 'next/link';
+import { FaSearch, FaSignOutAlt, FaUserPlus } from 'react-icons/fa';
+import supabase from '../../lib/supabase';
 import styles from './Navbar.module.css';
-
-import {
-  FaSearch,
-  FaVideo,
-  FaBell,
-  FaSignOutAlt,
-  FaUserPlus,
-} from 'react-icons/fa';
 
 interface INavLinkProps {
   icon: string;
@@ -24,24 +18,16 @@ const NavSearch = () => {
 };
 
 const NavList = ({ icon, to }: INavLinkProps) => {
+  const handleSignout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
+
   return (
     <li>
-      {icon === 'notification' && (
-        <Link href={to}>
-          <a>
-            {' '}
-            <FaBell className='nav-icon' />
-          </a>
-        </Link>
-      )}
-      {icon === 'video' && (
-        <Link href={to}>
-          <a>
-            {' '}
-            <FaVideo className='nav-icon' />
-          </a>
-        </Link>
-      )}
       {icon === 'signin' && (
         <Link href={to}>
           <a>
@@ -49,7 +35,9 @@ const NavList = ({ icon, to }: INavLinkProps) => {
           </a>
         </Link>
       )}
-      {icon === 'signout' && <FaSignOutAlt className='nav-icon' />}
+      {icon === 'signout' && (
+        <FaSignOutAlt className='nav-icon' onClick={handleSignout} />
+      )}
     </li>
   );
 };
@@ -66,7 +54,8 @@ const Navbar = () => {
       <NavSearch />
       <div className='nav-links-container'>
         <ul className='nav-links'>
-          <NavList icon='notification' to='#' />
+          <NavList icon='signin' to='/auth/login' />
+          <NavList icon='signout' to='#' />
         </ul>
       </div>
     </nav>

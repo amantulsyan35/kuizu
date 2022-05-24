@@ -1,18 +1,50 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout, QuizInput } from '../../../components';
-import { useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import Image from 'next/image';
 import styles from '../../../styles/question.module.css';
 import { useQuestionData } from '../../../context/question-context';
 import { blockchainBasics } from '../../../data/blockchain-basics-questions';
-import { Fragment } from 'react';
+import supabase from '../../../lib/supabase';
 
 type QuizStateProps = {
   questionNumber: number;
 };
 
-const Questions = () => {
+type TimerStateType = {
+  minute: number;
+  second: number;
+  status?: string;
+};
+
+type QuizQuestionType = {
+  id: number;
+  created_at: Date;
+  question: string;
+  options: [];
+  category: string;
+};
+
+type QuizType = {
+  quiz: QuizQuestionType;
+};
+
+export async function getServerSideProps() {
+  const { data: quiz, error } = await supabase.from('quiz').select('*');
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return {
+    props: {
+      quiz,
+    },
+  };
+}
+
+const Questions = ({ quiz }: QuizType) => {
   const {
     questionState: { userAnswers },
     questionDispatch,
@@ -22,6 +54,12 @@ const Questions = () => {
 
   const [state, setState] = useState<QuizStateProps>({
     questionNumber: 0,
+  });
+
+  const [timer, setTimer] = useState<TimerStateType>({
+    minute: 14,
+    second: 59,
+    status: '',
   });
 
   const handleNextButton = () => {
@@ -51,6 +89,34 @@ const Questions = () => {
       },
     });
   };
+  let countDownDate = new Date().getTime() + 15 * 60 * 1000;
+
+  const getTime = () => {
+    const intervalId = setInterval(() => {
+      let now = new Date().getTime();
+      let distance = countDownDate - now;
+
+      let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (seconds < 10) {
+        seconds = 0 + seconds;
+      } else if (minutes < 10) {
+        minutes = 0 + minutes;
+      }
+
+      setTimer({ ...timer, minute: minutes, second: seconds });
+
+      if (distance < 0) {
+        clearInterval(intervalId);
+        setTimer({ ...timer, status: 'Timeout' });
+      }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    getTime();
+  }, []);
 
   return (
     <Layout>
@@ -66,39 +132,53 @@ const Questions = () => {
       </section>
       <section className={styles.quizQuestionContainer}>
         <h1>Basics Of Blockchain </h1>
-        <p>
-          Question {state.questionNumber + 1} / {blockchainBasics.length} :
-        </p>
-        <div className={styles.quizContainer}>
-          {blockchainBasics.map((questionDetails, questionIndex) => {
-            if (questionIndex === state.questionNumber) {
-              return (
-                <Fragment key={questionDetails.id}>
-                  <p>
-                    <b>{questionDetails.question}</b>
-                  </p>
-                  {questionDetails.options.map(
-                    (questionOption, optionIndex) => {
-                      return (
-                        <QuizInput
-                          key={optionIndex}
-                          option={questionOption}
-                          checked={
-                            userAnswers.length !== 0 &&
-                            userAnswers[state.questionNumber]
-                              ?.selectedOption === questionOption
-                          }
-                          value={questionOption}
-                          handleChange={handleRadioChange}
-                        />
-                      );
-                    }
-                  )}
-                </Fragment>
-              );
-            }
-          })}
+
+        <div className={styles.statsContainer}>
+          <p>
+            Question {state.questionNumber + 1} / {blockchainBasics.length} :
+          </p>
+
+          {timer.status === '' && (
+            <p>
+              {timer.minute}:{timer.second}{' '}
+            </p>
+          )}
         </div>
+
+        {timer.status ? (
+          <h2 className={styles.timeoutHeading}>sorry you ran out of time</h2>
+        ) : (
+          <div className={styles.quizContainer}>
+            {blockchainBasics.map((questionDetails, questionIndex) => {
+              if (questionIndex === state.questionNumber) {
+                return (
+                  <Fragment key={questionDetails.id}>
+                    <p>
+                      <b>{questionDetails.question}</b>
+                    </p>
+                    {questionDetails.options.map(
+                      (questionOption, optionIndex) => {
+                        return (
+                          <QuizInput
+                            key={optionIndex}
+                            option={questionOption}
+                            checked={
+                              userAnswers.length !== 0 &&
+                              userAnswers[state.questionNumber]
+                                ?.selectedOption === questionOption
+                            }
+                            value={questionOption}
+                            handleChange={handleRadioChange}
+                          />
+                        );
+                      }
+                    )}
+                  </Fragment>
+                );
+              }
+            })}
+          </div>
+        )}
         <div className={styles.quizContainerButtons}>
           {state.questionNumber > 0 && (
             <button
@@ -108,7 +188,7 @@ const Questions = () => {
               Prev Question
             </button>
           )}
-          {state.questionNumber < 9 && (
+          {state.questionNumber < 9 && timer.status === '' && (
             <button
               onClick={handleNextButton}
               disabled={state.questionNumber > 9 ? true : false}
@@ -116,10 +196,18 @@ const Questions = () => {
               Next Question
             </button>
           )}
+
           {state.questionNumber > 8 && (
             <Link href={`/quiz/${params.query.slug}/results`}>
               <a>
                 <button onClick={handleNextButton}>Submit</button>
+              </a>
+            </Link>
+          )}
+          {timer.status !== '' && (
+            <Link href={`/quiz/${params.query.slug}/`}>
+              <a>
+                <button>Retake Quiz</button>
               </a>
             </Link>
           )}
