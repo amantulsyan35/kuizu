@@ -1,18 +1,16 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Layout, FormInput } from '../../../components';
-import { useRouter } from 'next/router';
 import supabase from '../../../lib/supabase';
 import styles from './login.module.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { user, error } = await supabase.auth.signIn({ email });
-    router.push('/');
-    alert('welcome aman');
+    const { error } = await supabase.auth.signIn({ email });
+    toast.success('confirmation email has been sent');
 
     if (error) {
       throw new Error(error.message);

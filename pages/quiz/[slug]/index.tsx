@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Layout, VideoPlayer } from '../../../components';
 import { FaEthereum } from 'react-icons/fa';
@@ -35,6 +36,8 @@ const QuizStats = ({ title, desc }: QuizStats) => {
 
 const QuizIntro = () => {
   const params = useRouter();
+
+  useEffect(() => {}, []);
 
   return (
     <Layout>

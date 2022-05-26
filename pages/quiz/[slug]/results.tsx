@@ -2,10 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import supabase from '../../../lib/supabase';
 import { Layout, QuizInput } from '../../../components';
 import { blockchainBasics } from '../../../data/blockchain-basics-questions';
 import { useQuestionData } from '../../../context/question-context';
-import supabase from '../../../lib/supabase';
 import styles from '../../../styles/results.module.css';
 
 const Result = () => {
@@ -14,9 +14,11 @@ const Result = () => {
 
   useEffect(() => {
     const correctAnswers = userAnswers?.filter(
-      (answer, i) => answer.selectedOption !== blockchainBasics[i].answer
+      (answer, i) =>
+        answer.selectedOption.trim() !== blockchainBasics[i].answer.trim()
     );
-    setCorrect(correctAnswers.length);
+
+    setCorrect(correctAnswers.length === 0 ? 10 : correctAnswers.length);
   }, []);
 
   const {
@@ -24,12 +26,26 @@ const Result = () => {
     questionDispatch,
   } = useQuestionData();
 
-  const handleNft = () => {
-    alert('hii');
+  const handleNft = async () => {
+    const user = supabase.auth.user();
+
+    if (user === null) {
+      alert('hi');
+    } else {
+      const { data, error } = await supabase
+        .from('user')
+        .insert({ points: 300, user_id: user.id });
+
+      console.log(data);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    }
   };
 
   const handleRetake = () => {
-    // params.push(`/quiz/${params.query.slug}`);
+    params.push(`/quiz/${params.query.slug}`);
   };
 
   return (
@@ -82,9 +98,7 @@ const Result = () => {
           {correct === userAnswers.length ? (
             <button onClick={handleNft}>Claim NFT</button>
           ) : (
-            <Link href='/'>
-              <button onClick={handleRetake}>Retake Quiz</button>
-            </Link>
+            <button onClick={handleRetake}>Retake Quiz</button>
           )}
         </div>
       </section>

@@ -1,12 +1,14 @@
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import {
   FaSearch,
   FaSignOutAlt,
   FaUserPlus,
   FaUserNinja,
 } from 'react-icons/fa';
+import { useRouter } from 'next/router';
 import supabase from '../../lib/supabase';
-import styles from './Navbar.module.css';
+import { toast } from 'react-toastify';
 
 interface INavLinkProps {
   icon: string;
@@ -23,8 +25,12 @@ const NavSearch = () => {
 };
 
 const NavList = ({ icon, to }: INavLinkProps) => {
+  const router = useRouter();
+
   const handleSignout = async () => {
     const { error } = await supabase.auth.signOut();
+    router.push('/auth/login');
+    toast.success('successfully logged out');
 
     if (error) {
       throw new Error(error.message);
@@ -55,7 +61,23 @@ const NavList = ({ icon, to }: INavLinkProps) => {
 };
 
 const Navbar = () => {
-  const user = supabase.auth.user();
+  const [userId, setUserId] = useState<any>('');
+  // const user = supabase.auth.user();
+
+  useEffect(() => {
+    function getUser() {
+      const user = supabase.auth.user();
+      if (user === null) {
+        setUserId('not_auth');
+      } else {
+        setUserId(user.id);
+        console.log(user.id);
+      }
+    }
+    getUser();
+  }, [userId]);
+
+  // console.log(userId);
 
   return (
     <nav className='nav-container'>
@@ -68,9 +90,9 @@ const Navbar = () => {
       <NavSearch />
       <div className='nav-links-container'>
         <ul className='nav-links'>
-          {user === null && <NavList icon='signin' to='/auth/login' />}
-          {user && <NavList icon='signout' to='#' />}
-          {user && <NavList icon='user' to='/user' />}
+          {userId === 'not_auth' && <NavList icon='signin' to='/auth/login' />}
+          {userId !== 'not_auth' && <NavList icon='signout' to='#' />}
+          {userId !== 'not_auth' && <NavList icon='user' to='/user' />}
         </ul>
       </div>
     </nav>

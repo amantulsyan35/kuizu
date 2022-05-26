@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { Navbar } from '../../components';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styles from './Layout.module.css';
-
-import cls from 'classnames';
 
 interface IlayoutProps {
   title?: string;
@@ -22,6 +22,7 @@ const Layout = ({ title, keywords, description, children }: IlayoutProps) => {
       </Head>
 
       <Navbar />
+      <ToastContainer position='bottom-right' />
       <main className={styles.container}>{children}</main>
     </>
   );

@@ -9,7 +9,7 @@ interface ICardProps {
 
 export const HompageCard = ({ title, imageUrl }: ICardProps) => {
   return (
-    <Link href='quiz/blockchain-basics'>
+    <Link href='/quiz/blockchain-basics'>
       <a>
         <div className={styles.quizCard}>
           <h4>{title}</h4>
