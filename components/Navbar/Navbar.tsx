@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { FaSearch, FaSignOutAlt, FaUserPlus } from 'react-icons/fa';
+import {
+  FaSearch,
+  FaSignOutAlt,
+  FaUserPlus,
+  FaUserNinja,
+} from 'react-icons/fa';
 import supabase from '../../lib/supabase';
 import styles from './Navbar.module.css';
 
@@ -35,6 +40,13 @@ const NavList = ({ icon, to }: INavLinkProps) => {
           </a>
         </Link>
       )}
+      {icon === 'user' && (
+        <Link href={to}>
+          <a>
+            <FaUserNinja className='nav-icon' />
+          </a>
+        </Link>
+      )}
       {icon === 'signout' && (
         <FaSignOutAlt className='nav-icon' onClick={handleSignout} />
       )}
@@ -43,6 +55,8 @@ const NavList = ({ icon, to }: INavLinkProps) => {
 };
 
 const Navbar = () => {
+  const user = supabase.auth.user();
+
   return (
     <nav className='nav-container'>
       <div className='nav-logo'>
@@ -54,8 +68,9 @@ const Navbar = () => {
       <NavSearch />
       <div className='nav-links-container'>
         <ul className='nav-links'>
-          <NavList icon='signin' to='/auth/login' />
-          <NavList icon='signout' to='#' />
+          {user === null && <NavList icon='signin' to='/auth/login' />}
+          {user && <NavList icon='signout' to='#' />}
+          {user && <NavList icon='user' to='/user' />}
         </ul>
       </div>
     </nav>

@@ -1,23 +1,36 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { Layout, QuizInput } from '../../../components';
 import { blockchainBasics } from '../../../data/blockchain-basics-questions';
 import { useQuestionData } from '../../../context/question-context';
+import supabase from '../../../lib/supabase';
 import styles from '../../../styles/results.module.css';
 
 const Result = () => {
-  const [correct, setCorrect] = useState(0);
+  const params = useRouter();
+  const [correct, setCorrect] = useState<number>(0);
+
+  useEffect(() => {
+    const correctAnswers = userAnswers?.filter(
+      (answer, i) => answer.selectedOption !== blockchainBasics[i].answer
+    );
+    setCorrect(correctAnswers.length);
+  }, []);
 
   const {
     questionState: { userAnswers },
     questionDispatch,
   } = useQuestionData();
 
-  //   useEffect(() => {
-  //     userAnswers.map((answer, i) =>
-  //       answer.selectedOption === blockchainBasics[i].answer ?  :
-  //     );
-  //   }, [userAnswers, correct]);
+  const handleNft = () => {
+    alert('hii');
+  };
+
+  const handleRetake = () => {
+    // params.push(`/quiz/${params.query.slug}`);
+  };
 
   return (
     <Layout>
@@ -33,16 +46,16 @@ const Result = () => {
       </section>
       <section className={styles.resultsContainer}>
         <h1>Results</h1>
-        <p className={styles.resultStat}>2 / 5 answers correct</p>
+        <p className={styles.resultStat}>
+          {correct} / {userAnswers?.length} answers correct
+        </p>
 
         <div className={styles.results}>
           {blockchainBasics.map((questionDetails, questionIndex) => {
             return (
               <div key={questionDetails.id} className={styles.resultQuestion}>
                 <p className={styles.resultStat}>
-                  <b>
-                    {questionDetails.id}: {questionDetails.question}
-                  </b>
+                  {questionDetails.id}: {questionDetails.question}
                 </p>
                 {questionDetails.options.map((questionOption, optionIndex) => {
                   return (
@@ -66,7 +79,13 @@ const Result = () => {
           })}
         </div>
         <div className={styles.resultContainerButtons}>
-          <button>Retake Quiz</button>
+          {correct === userAnswers.length ? (
+            <button onClick={handleNft}>Claim NFT</button>
+          ) : (
+            <Link href='/'>
+              <button onClick={handleRetake}>Retake Quiz</button>
+            </Link>
+          )}
         </div>
       </section>
     </Layout>

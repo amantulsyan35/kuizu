@@ -5,8 +5,6 @@ import styles from '../styles/Home.module.css';
 import { HompageCard } from '../components';
 
 const Home = () => {
-  const params = useRouter();
-
   return (
     <Layout>
       <section className={styles.homepageHero}>

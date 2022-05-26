@@ -80,6 +80,10 @@ const Questions = ({ quiz }: QuizType) => {
     }));
   };
 
+  const handleResultsButton = () => {
+    params.push(`/quiz/${params.query.slug}/results`);
+  };
+
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     questionDispatch({
       type: 'SET_USER_ANSWERS',
@@ -198,11 +202,7 @@ const Questions = ({ quiz }: QuizType) => {
           )}
 
           {state.questionNumber > 8 && (
-            <Link href={`/quiz/${params.query.slug}/results`}>
-              <a>
-                <button onClick={handleNextButton}>Submit</button>
-              </a>
-            </Link>
+            <button onClick={handleResultsButton}>Submit</button>
           )}
           {timer.status !== '' && (
             <Link href={`/quiz/${params.query.slug}/`}>
