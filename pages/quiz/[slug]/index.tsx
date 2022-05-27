@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Layout, VideoPlayer } from '../../../components';
+import { Layout } from '../../../components';
 import { FaEthereum } from 'react-icons/fa';
+import supabase from '../../../lib/supabase';
 import styles from '../../../styles/quiz.module.css';
 
 type QuizStats = {
@@ -11,16 +12,45 @@ type QuizStats = {
   desc: string | number;
 };
 
-const Instructions = () => {
+interface QuizDetailsObject {
+  id: string;
+  created_at: Date;
+  category: string;
+  time_limit: number;
+  quiz_points: number;
+  instructions: [];
+  resources: [];
+}
+
+type QuizDetailsProp = {
+  quizDetails: QuizDetailsObject[];
+};
+
+export const getServerSideProps = async () => {
+  const { data: quizDetails, error } = await supabase
+    .from('quizDetails')
+    .select('*')
+    .eq('category', 'blockchain-basics')
+    .single();
+
+  return {
+    props: {
+      quizDetails,
+    },
+  };
+};
+
+type InstructionProp = {
+  desc: string;
+};
+
+const Instructions = ({ desc }: InstructionProp) => {
   return (
     <div className={styles.instructions}>
       <span>
         <FaEthereum className={styles.instructionIcon} />
       </span>{' '}
-      <p>
-        This quiz consists of 5 multiple-choice questions. To be successfull
-        with the quizes, it is important to be conversant with all the topics.
-      </p>
+      <p>{desc}</p>
     </div>
   );
 };
@@ -34,7 +64,7 @@ const QuizStats = ({ title, desc }: QuizStats) => {
   );
 };
 
-const QuizIntro = () => {
+const QuizIntro = ({ quizDetails }: any) => {
   const params = useRouter();
 
   useEffect(() => {}, []);
@@ -67,48 +97,44 @@ const QuizIntro = () => {
         </div>
         <div className={styles.quizDetails}>
           <div className={styles.quizImage}>
-            <img
-              src='https://assets.materialup.com/uploads/75954ef2-8be1-4e59-b1b9-116231282937/preview.png'
-              alt='blockchain'
-            />
+            <img src={quizDetails.imgUrl} alt='blockchain' />
           </div>
           <div className={styles.quizStatsContainer}>
-            <QuizStats title='Date:' desc='6/5/2022' />
-            <QuizStats title='Time Limit:' desc='30 min' />
-            <QuizStats title='Attempts:' desc={3} />
-            <QuizStats title='Points:' desc={200} />
+            <QuizStats title='Date:' desc={Date.toString()} />
+            <QuizStats
+              title='Time Limit:'
+              desc={`${quizDetails.time_limit} mins`}
+            />
+            <QuizStats title='Attempts:' desc={quizDetails.attempts} />
+            <QuizStats title='Points:' desc={quizDetails.quiz_points} />
           </div>
         </div>
         <h3>Instructions</h3>
         <div className={styles.instructionContainer}>
-          <Instructions />
-          <Instructions />
-          <Instructions />
+          {quizDetails.instructions.map((i: string, index: number) => {
+            return <Instructions key={index} desc={i} />;
+          })}
         </div>
 
         <h3>Few Resources to get you started</h3>
         <div className={styles.instructionContainer}>
-          <Link href=''>
-            <a>
-              <Instructions />
-            </a>
-          </Link>
-          <Link href=''>
-            <a>
-              <Instructions />
-            </a>
-          </Link>
-          <Link href=''>
-            <a>
-              <Instructions />
-            </a>
-          </Link>
+          {quizDetails.resources.map((r: string, i: number) => {
+            return (
+              <Fragment key={i}>
+                <Link href={r}>
+                  <a>
+                    <Instructions desc={r} />
+                  </a>
+                </Link>
+              </Fragment>
+            );
+          })}
         </div>
         <h3>Before starting One last thing</h3>
         <div className={styles.quizStart}>
           <img src='https://media2.giphy.com/media/kDZMoj30w3OswLR08v/giphy.gif' />
         </div>
-        <Link href={`${params.query.slug}/questions`}>
+        <Link href={`/quiz/${params.query.slug}/questions`}>
           <button className={styles.startButton}>start</button>
         </Link>
       </section>

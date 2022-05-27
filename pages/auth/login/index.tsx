@@ -2,15 +2,24 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Layout, FormInput } from '../../../components';
 import supabase from '../../../lib/supabase';
+import { useUser } from '../../../context/user-context';
 import styles from './login.module.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
+  const { userDispatch } = useUser();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signIn({ email });
+    const { user, error } = await supabase.auth.signIn({ email });
     toast.success('confirmation email has been sent');
+
+    if (user) {
+      userDispatch({
+        type: 'SET_USER_TOKEN',
+        payload: user.id,
+      });
+    }
 
     if (error) {
       throw new Error(error.message);

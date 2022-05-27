@@ -8,7 +8,7 @@ type UserContextType = {
 type Dispatch = (action: UserActionType) => void;
 
 type UserStateType = {
-  user: {};
+  userId: '';
 };
 
 interface UserActionType {
@@ -29,14 +29,14 @@ const UserProvider = ({ children }: UserProviderProps) => {
   ): UserStateType => {
     switch (action.type) {
       case 'SET_USER_TOKEN':
-        return { ...state, user: action.payload };
+        return { ...state, userId: action.payload };
       default:
         return state;
     }
   };
 
   const initialState: UserStateType = {
-    user: {},
+    userId: '',
   };
 
   const [userState, userDispatch] = useReducer(userReducerFunc, initialState);
