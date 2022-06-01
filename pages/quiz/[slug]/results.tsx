@@ -7,6 +7,7 @@ import { Layout, QuizInput } from '../../../components';
 import { blockchainBasics } from '../../../data/blockchain-basics-questions';
 import { useQuestionData } from '../../../context/question-context';
 import styles from '../../../styles/results.module.css';
+import { requireAuthentication } from '../../../HOC/requireAuthentication';
 
 const Result = () => {
   const params = useRouter();
@@ -107,3 +108,9 @@ const Result = () => {
 };
 
 export default Result;
+
+export const getServerSideProps = requireAuthentication(async (ctx) => {
+  return {
+    props: {},
+  };
+});

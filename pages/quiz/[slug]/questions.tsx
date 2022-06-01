@@ -7,6 +7,7 @@ import styles from '../../../styles/question.module.css';
 import { useQuestionData } from '../../../context/question-context';
 import { blockchainBasics } from '../../../data/blockchain-basics-questions';
 import supabase from '../../../lib/supabase';
+import { requireAuthentication } from '../../../HOC/requireAuthentication';
 
 type QuizStateProps = {
   questionNumber: number;
@@ -30,7 +31,7 @@ type QuizType = {
   quiz: QuizQuestionType;
 };
 
-export async function getServerSideProps() {
+export const getServerSideProps = requireAuthentication(async (context) => {
   const { data: quiz, error } = await supabase.from('quiz').select('*');
 
   if (error) {
@@ -42,7 +43,7 @@ export async function getServerSideProps() {
       quiz,
     },
   };
-}
+});
 
 const Questions = ({ quiz }: QuizType) => {
   const {

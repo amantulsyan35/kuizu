@@ -12,19 +12,19 @@ type QuizStats = {
   desc: string | number;
 };
 
-interface QuizDetailsObject {
-  id: string;
-  created_at: Date;
-  category: string;
-  time_limit: number;
-  quiz_points: number;
-  instructions: [];
-  resources: [];
-}
+// interface QuizDetailsObject {
+//   id: string;
+//   created_at: Date;
+//   category: string;
+//   time_limit: number;
+//   quiz_points: number;
+//   instructions: [];
+//   resources: [];
+// }
 
-type QuizDetailsProp = {
-  quizDetails: QuizDetailsObject[];
-};
+// type QuizDetailsProp = {
+//   quizDetails: QuizDetailsObject[];
+// };
 
 export const getServerSideProps = async () => {
   const { data: quizDetails, error } = await supabase

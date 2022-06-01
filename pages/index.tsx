@@ -3,9 +3,7 @@ import { useState, useEffect } from 'react';
 import { Layout } from '../components';
 import styles from '../styles/Home.module.css';
 import { HompageCard } from '../components';
-import { useUser } from '../context/user-context';
 import supabase from '../lib/supabase';
-import { toast } from 'react-toastify';
 
 interface CategoryObject {
   id: number;

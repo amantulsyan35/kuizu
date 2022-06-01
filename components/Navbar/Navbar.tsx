@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   FaSearch,
   FaSignOutAlt,
@@ -61,12 +61,11 @@ const NavList = ({ icon, to }: INavLinkProps) => {
 };
 
 const Navbar = () => {
-  const [userId, setUserId] = useState<any>('');
-  // const user = supabase.auth.user();
+  const [userId, setUserId] = useState<any>('not_auth');
 
   useEffect(() => {
-    function getUser() {
-      const user = supabase.auth.user();
+    async function getUser() {
+      const user = await supabase.auth.user();
       if (user === null) {
         setUserId('not_auth');
       } else {
@@ -74,10 +73,9 @@ const Navbar = () => {
         console.log(user.id);
       }
     }
-    getUser();
-  }, [userId]);
 
-  // console.log(userId);
+    getUser();
+  }, []);
 
   return (
     <nav className='nav-container'>

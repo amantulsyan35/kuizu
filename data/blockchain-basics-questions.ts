@@ -11,6 +11,7 @@ export const blockchainBasics = [
     ],
     answer: 'A third-part which verifies all the transactions',
   },
+
   {
     id: 2,
     question:
