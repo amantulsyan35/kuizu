@@ -66,6 +66,7 @@ const Navbar = () => {
   useEffect(() => {
     async function getUser() {
       const user = await supabase.auth.user();
+
       if (user === null) {
         setUserId('not_auth');
       } else {
