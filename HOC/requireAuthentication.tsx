@@ -5,8 +5,8 @@ import { redirect } from '../lib/redirect';
 
 export const requireAuthentication = (gssp: GetServerSideProps) => {
   return async (ctx: GetServerSidePropsContext) => {
-    const user = await supabase.auth.user();
-
+    const { user } = await supabase.auth.api.getUserByCookie(ctx.req);
+    console.log(user);
     if (!user) {
       redirect(ctx, '/auth/login');
     }

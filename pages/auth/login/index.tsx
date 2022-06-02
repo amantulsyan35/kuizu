@@ -11,8 +11,8 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { user, error } = await supabase.auth.signIn({ email });
     toast.success('confirmation email has been sent');
+    const { user, error } = await supabase.auth.signIn({ email });
 
     if (error) {
       throw new Error(error.message);
