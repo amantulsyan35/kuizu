@@ -8,6 +8,7 @@ import { blockchainBasics } from '../../../data/blockchain-basics-questions';
 import { useQuestionData } from '../../../context/question-context';
 import styles from '../../../styles/results.module.css';
 import { requireAuthentication } from '../../../HOC/requireAuthentication';
+import { toast } from 'react-toastify';
 
 const Result = () => {
   const params = useRouter();
@@ -24,20 +25,17 @@ const Result = () => {
 
   const {
     questionState: { userAnswers },
-    questionDispatch,
   } = useQuestionData();
 
   const handleNft = async () => {
     const user = supabase.auth.user();
 
     if (user === null) {
-      alert('hi');
+      toast.error('User not defined');
     } else {
       const { data, error } = await supabase
         .from('user')
         .insert({ points: 300, user_id: user.id });
-
-      console.log(data);
 
       if (error) {
         throw new Error(error.message);

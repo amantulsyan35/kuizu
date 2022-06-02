@@ -21,7 +21,6 @@ const User = () => {
           .eq('user_id', user.id)
           .single();
 
-        console.log(userData);
         setScore(userData.points);
       }
     }

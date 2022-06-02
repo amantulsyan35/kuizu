@@ -14,13 +14,6 @@ const Login = () => {
     const { user, error } = await supabase.auth.signIn({ email });
     toast.success('confirmation email has been sent');
 
-    // if (user) {
-    //   userDispatch({
-    //     type: 'SET_USER_TOKEN',
-    //     payload: user.id,
-    //   });
-    // }
-
     if (error) {
       throw new Error(error.message);
     }

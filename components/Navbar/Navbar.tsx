@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FaSearch,
   FaSignOutAlt,
@@ -61,21 +61,29 @@ const NavList = ({ icon, to }: INavLinkProps) => {
 };
 
 const Navbar = () => {
-  const [userId, setUserId] = useState<any>('not_auth');
+  const [user, setUser] = useState<null | {}>(null);
 
   useEffect(() => {
     async function getUser() {
-      const user = await supabase.auth.user();
-      if (user === null) {
-        setUserId('not_auth');
-      } else {
-        setUserId(user.id);
-        console.log(user.id);
-      }
+      const session = supabase.auth.session();
+      setUser(session?.user ?? null);
+
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          const currentUser = session?.user;
+          setUser(currentUser ?? null);
+        }
+      );
+
+      return () => {
+        authListener?.unsubscribe();
+      };
     }
 
     getUser();
-  }, []);
+  }, [user]);
+
+  // console.log(user);
 
   return (
     <nav className='nav-container'>
@@ -88,9 +96,9 @@ const Navbar = () => {
       <NavSearch />
       <div className='nav-links-container'>
         <ul className='nav-links'>
-          {userId === 'not_auth' && <NavList icon='signin' to='/auth/login' />}
-          {userId !== 'not_auth' && <NavList icon='signout' to='#' />}
-          {userId !== 'not_auth' && <NavList icon='user' to='/user' />}
+          {!user && <NavList icon='signin' to='/auth/login' />}
+          {user && <NavList icon='signout' to='#' />}
+          {user && <NavList icon='user' to='/user' />}
         </ul>
       </div>
     </nav>

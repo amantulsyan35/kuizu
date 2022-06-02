@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout, QuizInput } from '../../../components';
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, Suspense, lazy } from 'react';
 import Image from 'next/image';
 import styles from '../../../styles/question.module.css';
 import { useQuestionData } from '../../../context/question-context';
 import { blockchainBasics } from '../../../data/blockchain-basics-questions';
 import supabase from '../../../lib/supabase';
 import { requireAuthentication } from '../../../HOC/requireAuthentication';
+import { toast } from 'react-toastify';
 
 type QuizStateProps = {
   questionNumber: number;
@@ -70,7 +71,7 @@ const Questions = ({ quiz }: QuizType) => {
         questionNumber: state.questionNumber + 1,
       }));
     } else {
-      alert('select option first');
+      toast.error('select option first');
     }
   };
 
