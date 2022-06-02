@@ -20,9 +20,9 @@ const Layout = ({ title, keywords, description, children }: IlayoutProps) => {
         <meta name='description' content={description} />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-
       <Navbar />
       <ToastContainer position='bottom-right' />
+
       <main className={styles.container}>{children}</main>
     </>
   );

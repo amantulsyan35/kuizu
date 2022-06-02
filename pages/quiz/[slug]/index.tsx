@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Fragment, useEffect } from 'react';
+import { Fragment, Suspense, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Layout } from '../../../components';
 import { FaEthereum } from 'react-icons/fa';

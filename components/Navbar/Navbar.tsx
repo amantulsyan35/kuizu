@@ -9,6 +9,7 @@ import {
 import { useRouter } from 'next/router';
 import supabase from '../../lib/supabase';
 import { toast } from 'react-toastify';
+import { useUser } from '../../context/user-context';
 
 interface INavLinkProps {
   icon: string;
@@ -61,7 +62,8 @@ const NavList = ({ icon, to }: INavLinkProps) => {
 };
 
 const Navbar = () => {
-  const [user, setUser] = useState<null | {}>(null);
+  const [user, setUser] = useState<any>(null);
+  const { userDispatch } = useUser();
 
   useEffect(() => {
     async function getUser() {
@@ -82,8 +84,6 @@ const Navbar = () => {
 
     getUser();
   }, [user]);
-
-  // console.log(user);
 
   return (
     <nav className='nav-container'>

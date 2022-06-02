@@ -8,7 +8,7 @@ type UserContextType = {
 type Dispatch = (action: UserActionType) => void;
 
 type UserStateType = {
-  userId: '';
+  userId: any;
 };
 
 interface UserActionType {
