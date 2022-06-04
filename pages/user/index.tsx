@@ -45,12 +45,6 @@ const User = () => {
           <p>{userObj.email}</p>
           <p className={styles.points}>total points: {score}</p>
         </div>
-        <h3>proof of completion</h3>
-        <div className={styles.completedContainer}>
-          <div className={styles.completed}>x</div>
-          <div className={styles.completed}>x</div>
-          <div className={styles.completed}>x</div>
-        </div>
       </section>
     </Layout>
   );
